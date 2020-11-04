@@ -14,6 +14,7 @@
 ## Запуск
 
 1. Запускаем контейнера. В папке docker выполнить  ```docker-compose up --build -d```
-2. Запустить скрипт генерации ```docker exec -it bothelp-workflow php /var/www/html/sender.php```
+2. Подождать пару минут пока контейнеры польностью запустятся и установятся зависимости
+3. Запустить скрипт генерации ```docker exec -it bothelp-workflow php /var/www/html/sender.php```
 
 Результат выполнения можно посмотреть в ```code\output\logs.txt```
