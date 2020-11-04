@@ -43,7 +43,12 @@ class Queue
         $this->channel->basic_publish($msg, '', self::TASK_QUEUE);
     }
 
-    public function consumeMessages(callable $callback)
+    /**
+     * @param callable $callback
+     *
+     * @throws \ErrorException
+     */
+    public function consumeMessages(callable $callback): void
     {
         $this->channel->basic_qos(null, 10, null);
         $this->channel->basic_consume('task_queue', '', false, false, false, false, $callback);

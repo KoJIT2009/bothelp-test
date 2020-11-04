@@ -21,6 +21,12 @@ class Db
         $this->pdo = new PDO(self::DSN);
     }
 
+    /**
+     * @param string $userId
+     * @param string $eventId
+     *
+     * @return bool
+     */
     public function insertTaskOrder(string $userId, string $eventId): bool
     {
         $sql = <<<SQL
@@ -30,6 +36,11 @@ SQL;
         return $this->pdo->prepare($sql)->execute([$userId, $eventId]);
     }
 
+    /**
+     * @param string $userId
+     *
+     * @return mixed
+     */
     public function getFirstUserEvent(string $userId) {
         $sql = <<<SQL
 SELECT tasks_order.event_id
@@ -46,6 +57,9 @@ SQL;
         return $smtp->fetchColumn();
     }
 
+    /**
+     * @return mixed
+     */
     public function getLastEventId() {
         $sql = <<<SQL
 SELECT tasks_order.event_id
@@ -54,12 +68,16 @@ ORDER BY tasks_order.event_id DESC
 LIMIT 1
 SQL;
 
-        $smtp = $this->pdo->prepare($sql);
-        $smtp->execute();
+        $smtp = $this->pdo->query($sql);
 
         return $smtp->fetchColumn();
     }
 
+    /**
+     * @param string $eventId
+     *
+     * @return bool
+     */
     public function insertExecutedEvent(string $eventId): bool
     {
         $sql = <<<SQL

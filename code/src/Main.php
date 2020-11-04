@@ -22,6 +22,8 @@ class Main
     }
 
     /**
+     * Генерируем сообщения
+     *
      * @throws JsonException|ErrorException
      */
     public function generate(): void
@@ -41,6 +43,8 @@ class Main
     }
 
     /**
+     * Обработка сообщений
+     *
      * @param $msg
      *
      * @throws JsonException
@@ -75,16 +79,27 @@ class Main
         }
     }
 
-    private function lastEventId() {
+    /**
+     * Id послднго записанного собыли, либо 0
+     *
+     * @return int
+     */
+    private function lastEventId(): int
+    {
         $lastEventId = $this->db->getLastEventId();
 
         if (false === $lastEventId) {
             $lastEventId = 0;
         }
 
-        return $lastEventId;
+        return (int)$lastEventId;
     }
 
+    /**
+     * Запись в файл лога
+     *
+     * @param array $data
+     */
     private function writeToLog(array $data): void
     {
         $text = "account_id: $data[0], event_id: $data[1]";

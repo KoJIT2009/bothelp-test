@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use Exception;
+
 class Logics
 {
     private array $users = [];
@@ -20,6 +22,8 @@ class Logics
     }
 
     /**
+     * Получаем id пользователя, если пользователи кончились, генерируем снова
+     *
      * @return mixed
      */
     private function getUserId(): string
@@ -34,7 +38,12 @@ class Logics
         return (string)array_pop($this->users);
     }
 
-
+    /**
+     * Получем данные для отправки, либо null если лимит превышен
+     *
+     * @return array|null
+     * @throws Exception
+     */
     public function getData(): ?array
     {
         if (count($this->userChunks) < 1) {
@@ -48,6 +57,11 @@ class Logics
         return array_pop($this->userChunks);
     }
 
+    /**
+     * Вычисляем чанки для рандомного пользователя
+     *
+     * @throws Exception
+     */
     private function calcChunks(): void
     {
         $userId = $this->getUserId();
@@ -70,7 +84,10 @@ class Logics
         $this->userChunks = array_reverse($localChunks);
     }
 
-    private function getDbEventId()
+    /**
+     * @return int
+     */
+    private function getDbEventId(): int
     {
         return ($this->lastEventIdInDb + $this->eventCurrent);
     }
