@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App;
 
 use ErrorException;
+use Exception;
 use JsonException;
 use PhpAmqpLib\Channel\AMQPChannel;
 
@@ -15,10 +16,12 @@ use PhpAmqpLib\Channel\AMQPChannel;
 class Main
 {
     private $db;
+    private $queue;
 
     public function __construct()
     {
         $this->db = new Db();
+        $this->queue = new Queue();
     }
 
     /**
@@ -29,16 +32,38 @@ class Main
     public function generate(): void
     {
         $logics = new Logics($this->lastEventId());
-        $queue = new Queue();
 
         while ($data = $logics->getData()) {
+            $this->handleGeneratedData($data);
+        }
+    }
+
+    /**
+     * @param array $data
+     *
+     * @throws ErrorException
+     * @throws JsonException
+     */
+    private function handleGeneratedData(array $data): void
+    {
+        try {
+            $this->db->getPdo()->beginTransaction();
+
+
             $isAdd = $this->db->insertTaskOrder((string)$data[0], (string)$data[1]);
 
             if (false === $isAdd) {
                 throw new ErrorException('Ошибка добавления');
             }
 
-            $queue->publishMessage(json_encode($data, JSON_THROW_ON_ERROR));
+            $this->queue->publishMessage(json_encode($data, JSON_THROW_ON_ERROR));
+
+
+            $this->db->getPdo()->commit();
+        } catch (Exception $exception) {
+            $this->db->getPdo()->rollBack();
+
+            throw $exception;
         }
     }
 

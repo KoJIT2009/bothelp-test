@@ -86,4 +86,12 @@ SQL;
 
         return $this->pdo->prepare($sql)->execute([$eventId]);
     }
+
+    /**
+     * @return PDO
+     */
+    public function getPdo(): PDO
+    {
+        return $this->pdo;
+    }
 }
