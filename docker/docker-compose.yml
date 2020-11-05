@@ -14,8 +14,7 @@ services:
       - bothelp-db
   bothelp-db:
     container_name: ${APP_CONTAINER_NAME_DB}
-    build:
-      context: ${APP_BUILD_CONTEXT_POSTGRES}
+    image: ${APP_IMAGE_PGSQL}
     shm_size: 2gb
     restart: always
     command: "postgres -c config_file=/var/lib/postgresql/config/postgresql.conf"
